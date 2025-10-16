@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Entrée de code (tentatives illimitées)</title>
+  <style>
+    :root{--bg:#fff;--fg:#000;--muted:#666}
+    html,body{height:100%;margin:0;font-family:system-ui,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--fg)}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{width:100%;max-width:460px;border:2px solid var(--fg);border-radius:12px;padding:20px;text-align:center}
+    h1{margin:0 0 8px;font-size:20px}
+    p.lead{margin:0 0 12px;color:var(--muted)}
+    input[type="text"]{width:100%;padding:12px;font-size:18px;margin:12px 0;border-radius:8px;border:1px solid #ccc;text-align:center}
+    button{padding:10px 16px;font-size:16px;border-radius:8px;border:0;background:var(--fg);color:var(--bg);cursor:pointer}
+    .msg{margin-top:12px;font-size:15px;min-height:1.2em}
+    .success{color:green}
+    .error{color:crimson}
+    .meta{margin-top:8px;font-size:13px;color:var(--muted)}
+    .small{font-size:12px;color:var(--muted);margin-top:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card" role="main" aria-labelledby="title">
+      <h1 id="title">Entrer le code</h1>
+      <p class="lead">Saisis un code numérique. Tu peux essayer autant de fois que tu veux.</p>
+
+      <label for="code" class="sr-only">Code</label>
+      <input id="code" inputmode="numeric" pattern="[0-9]*" maxlength="12" placeholder="ex: 1234" autocomplete="off" />
+
+      <div>
+        <button id="submit" type="button">Valider</button>
+      </div>
+
+      <div class="msg" id="msg" aria-live="polite"></div>
+      <div class="meta" id="attempts">Tentatives : 0</div>
+      <div class="small">Format attendu : chiffres uniquement. Change le code secret dans la variable <code>correctCode</code> du script.</div>
+    </main>
+  </div>
+
+  <script>
+    // === CONFIGURE ICI ===
+    const correctCode = "4271"; // <-- ton code secret (changer si besoin)
+
+    // === VARIABLES ===
+    let attempts = 0;
+    const input = document.getElementById('code');
+    const btn = document.getElementById('submit');
+    const msg = document.getElementById('msg');
+    const attemptsEl = document.getElementById('attempts');
+
+    // === FONCTIONS UTILITAIRES ===
+    function sanitize(s){
+      return (s||'').toString().replace(/\s+/g,'').replace(/[^0-9]/g,'');
+    }
+
+    function setMessage(text, type = ""){
+      msg.textContent = text;
+      msg.className = "msg " + (type || "");
+    }
+
+    function updateAttempts(){
+      attemptsEl.textContent = `Tentatives : ${attempts}`;
+    }
+
+    // === LOGIQUE AU CLIC ===
+    btn.addEventListener('click', () => {
+      const raw = sanitize(input.value);
+      if(raw.length === 0){
+        setMessage('Veuillez entrer un code (chiffres).', 'error');
+        return;
+      }
+
+      attempts++;
+      updateAttempts();
+
+      if(raw === correctCode){
+        // succès : on affiche le message mais on laisse la possibilité de retenter
+        setMessage('✅ Code correct — accès autorisé.', 'success');
+        // Optionnel : tu peux ajouter ici une action (rediriger, afficher un élément caché, etc.)
+      } else {
+        setMessage('❌ Code incorrect. Réessaie autant que tu veux.', 'error');
+      }
+
+      // nettoie le champ pour la tentative suivante
+      input.value = '';
+      input.focus();
+    });
+
+    // Entrée avec la touche Entrée
+    input.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') {
+        btn.click();
+      }
+    });
+
+    // initialisation
+    updateAttempts();
+    input.focus();
+  </script>
+</body>
+</html>
