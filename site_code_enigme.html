@@ -1,103 +1,141 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Entrée de code (tentatives illimitées)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrée du Code</title>
   <style>
-    :root{--bg:#fff;--fg:#000;--muted:#666}
-    html,body{height:100%;margin:0;font-family:system-ui,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--fg)}
-    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
-    .card{width:100%;max-width:460px;border:2px solid var(--fg);border-radius:12px;padding:20px;text-align:center}
-    h1{margin:0 0 8px;font-size:20px}
-    p.lead{margin:0 0 12px;color:var(--muted)}
-    input[type="text"]{width:100%;padding:12px;font-size:18px;margin:12px 0;border-radius:8px;border:1px solid #ccc;text-align:center}
-    button{padding:10px 16px;font-size:16px;border-radius:8px;border:0;background:var(--fg);color:var(--bg);cursor:pointer}
-    .msg{margin-top:12px;font-size:15px;min-height:1.2em}
-    .success{color:green}
-    .error{color:crimson}
-    .meta{margin-top:8px;font-size:13px;color:var(--muted)}
-    .small{font-size:12px;color:var(--muted);margin-top:6px}
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0a0a0a;
+      color: #f5f5f5;
+      text-align: center;
+      margin-top: 120px;
+    }
+
+    h1 {
+      color: #00bcd4;
+      margin-bottom: 30px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 18px;
+      border: 2px solid #00bcd4;
+      border-radius: 6px;
+      background: #111;
+      color: white;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 18px;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      margin-left: 10px;
+      cursor: pointer;
+      background-color: #00bcd4;
+      color: #111;
+      transition: all 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0097a7;
+    }
+
+    #message {
+      margin-top: 25px;
+      font-size: 20px;
+      color: #ff5555;
+      min-height: 40px;
+    }
+
+    /* Petit effet tremblement pour les erreurs */
+    .shake {
+      animation: shake 0.3s;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <main class="card" role="main" aria-labelledby="title">
-      <h1 id="title">Entrer le code</h1>
-      <p class="lead">Saisis un code numérique. Tu peux essayer autant de fois que tu veux.</p>
 
-      <label for="code" class="sr-only">Code</label>
-      <input id="code" inputmode="numeric" pattern="[0-9]*" maxlength="12" placeholder="ex: 1234" autocomplete="off" />
+  <h1>Entre le code secret</h1>
+  <input type="text" id="codeInput" placeholder="Code à 4 chiffres">
+  <button onclick="verifierCode()">Valider</button>
 
-      <div>
-        <button id="submit" type="button">Valider</button>
-      </div>
-
-      <div class="msg" id="msg" aria-live="polite"></div>
-      <div class="meta" id="attempts">Tentatives : 0</div>
-      <div class="small">Format attendu : chiffres uniquement. Change le code secret dans la variable <code>correctCode</code> du script.</div>
-    </main>
-  </div>
+  <div id="message"></div>
 
   <script>
-    // === CONFIGURE ICI ===
-    const correctCode = "4271"; // <-- ton code secret (changer si besoin)
+    const codeCorrect = "1234"; // 🔐 ton code ici
 
-    // === VARIABLES ===
-    let attempts = 0;
-    const input = document.getElementById('code');
-    const btn = document.getElementById('submit');
-    const msg = document.getElementById('msg');
-    const attemptsEl = document.getElementById('attempts');
+    const messagesErreur = [
+      "T’es mauvais !",
+      "Alors tu galères ?",
+      "Tu me déçois...",
+      "Essaie encore, petit génie.",
+      "Pas aujourd’hui, Sherlock.",
+      "Raté ! Essaie un autre code.",
+      "On a vu mieux !",
+      "Non, non, et non !",
+      "Tu croyais vraiment que c’était ça ?",
+      "Faut réfléchir un peu plus !",
+      "Même ma grand-mère ferait mieux.",
+      "Gamin, t’es à côté de la plaque.",
+      "J'espère que tu vas abandonner bientôt.",
+      "Allllloooooo ?",
+      "On se fait chier là.",
+      "Tu as pensé à redémarrer ton cerveau ?",
+      "Alors gros bébé, on trouve pas ?",
+      "Chaque essai raté me procure une joie immense.",
+      "Le but est de trouver le code, pas de spammer.",
+      "Trop chaud ? Non. Trop nul ? Peut-être.",
+      "Encore raté… ça devient gênant.",
+      "Essaie au hasard, ça marchera peut-être (ou pas).",
+      "Le code pleure de désespoir.",
+      "Tu veux un indice ? Dommage, y’en a pas.",
+      "Le clavier te juge sévèrement.",
+      "T’as presque réussi… enfin non.",
+      "Continue, la persévérance c’est mignon.",
+      "Un jour peut-être… mais pas aujourd’hui.",
+      "Ouille. C’était pas glorieux celui-là."
+    ];
 
-    // === FONCTIONS UTILITAIRES ===
-    function sanitize(s){
-      return (s||'').toString().replace(/\s+/g,'').replace(/[^0-9]/g,'');
-    }
+    // 🧮 Charger le nombre d’essais depuis le stockage local
+    let tentatives = localStorage.getItem("tentatives") 
+      ? parseInt(localStorage.getItem("tentatives")) 
+      : 0;
 
-    function setMessage(text, type = ""){
-      msg.textContent = text;
-      msg.className = "msg " + (type || "");
-    }
+    function verifierCode() {
+      const saisie = document.getElementById("codeInput").value.trim();
+      const messageDiv = document.getElementById("message");
 
-    function updateAttempts(){
-      attemptsEl.textContent = `Tentatives : ${attempts}`;
-    }
-
-    // === LOGIQUE AU CLIC ===
-    btn.addEventListener('click', () => {
-      const raw = sanitize(input.value);
-      if(raw.length === 0){
-        setMessage('Veuillez entrer un code (chiffres).', 'error');
-        return;
-      }
-
-      attempts++;
-      updateAttempts();
-
-      if(raw === correctCode){
-        // succès : on affiche le message mais on laisse la possibilité de retenter
-        setMessage('✅ Code correct — accès autorisé.', 'success');
-        // Optionnel : tu peux ajouter ici une action (rediriger, afficher un élément caché, etc.)
+      if (saisie === codeCorrect) {
+        messageDiv.style.color = "#00ff00";
+        messageDiv.textContent = `✅ Bien joué, le code est correct ! (${tentatives} essais)`;
+        // Réinitialiser le compteur à la réussite
+        localStorage.removeItem("tentatives");
       } else {
-        setMessage('❌ Code incorrect. Réessaie autant que tu veux.', 'error');
+        tentatives++;
+        localStorage.setItem("tentatives", tentatives); // 🔐 sauvegarde permanente
+        const phrase = messagesErreur[Math.floor(Math.random() * messagesErreur.length)];
+        messageDiv.style.color = "#ff5555";
+        messageDiv.textContent = `${phrase} (Essai n°${tentatives})`;
+
+        // petit effet de tremblement visuel
+        messageDiv.classList.remove("shake");
+        void messageDiv.offsetWidth; // reset animation
+        messageDiv.classList.add("shake");
       }
-
-      // nettoie le champ pour la tentative suivante
-      input.value = '';
-      input.focus();
-    });
-
-    // Entrée avec la touche Entrée
-    input.addEventListener('keydown', (e) => {
-      if(e.key === 'Enter') {
-        btn.click();
-      }
-    });
-
-    // initialisation
-    updateAttempts();
-    input.focus();
+    }
   </script>
+
 </body>
 </html>
