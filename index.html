@@ -51,7 +51,7 @@
       min-height: 40px;
     }
 
-    /* Petit effet tremblement pour les erreurs */
+    /* Tremblement pour erreur */
     .shake {
       animation: shake 0.3s;
     }
@@ -63,6 +63,18 @@
       75% { transform: translateX(-5px); }
       100% { transform: translateX(0); }
     }
+
+    /* Animation succès */
+    .success {
+      color: #00ff88;
+      animation: successPulse 0.8s ease-in-out;
+    }
+
+    @keyframes successPulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -70,11 +82,13 @@
   <h1>Entre le code secret</h1>
   <input type="text" id="codeInput" placeholder="Code à 4 chiffres">
   <button onclick="verifierCode()">Valider</button>
+  <button onclick="resetCompteur()">🔄 Réinitialiser le compteur</button>
 
   <div id="message"></div>
 
   <script>
     const codeCorrect = "1234"; // 🔐 ton code ici
+    const messageReussite = "✨ Félicitations, tu as percé le mystère ! ✨";
 
     const messagesErreur = [
       "T’es mauvais !",
@@ -108,9 +122,9 @@
       "Ouille. C’était pas glorieux celui-là."
     ];
 
-    // 🧮 Charger le nombre d’essais depuis le stockage local
-    let tentatives = localStorage.getItem("tentatives") 
-      ? parseInt(localStorage.getItem("tentatives")) 
+    // Charger le compteur
+    let tentatives = localStorage.getItem("tentatives")
+      ? parseInt(localStorage.getItem("tentatives"))
       : 0;
 
     function verifierCode() {
@@ -118,22 +132,31 @@
       const messageDiv = document.getElementById("message");
 
       if (saisie === codeCorrect) {
-        messageDiv.style.color = "#00ff00";
-        messageDiv.textContent = `✅ Bien joué, le code est correct ! (${tentatives} essais)`;
-        // Réinitialiser le compteur à la réussite
+        messageDiv.classList.remove("shake");
+        messageDiv.classList.add("success");
+        messageDiv.textContent = `${messageReussite} (en ${tentatives} essais 🎯)`;
+
+        // Réinitialiser le compteur
         localStorage.removeItem("tentatives");
+        tentatives = 0;
       } else {
         tentatives++;
-        localStorage.setItem("tentatives", tentatives); // 🔐 sauvegarde permanente
+        localStorage.setItem("tentatives", tentatives);
         const phrase = messagesErreur[Math.floor(Math.random() * messagesErreur.length)];
         messageDiv.style.color = "#ff5555";
         messageDiv.textContent = `${phrase} (Essai n°${tentatives})`;
 
-        // petit effet de tremblement visuel
         messageDiv.classList.remove("shake");
-        void messageDiv.offsetWidth; // reset animation
+        void messageDiv.offsetWidth;
         messageDiv.classList.add("shake");
       }
+    }
+
+    function resetCompteur() {
+      localStorage.removeItem("tentatives");
+      tentatives = 0;
+      document.getElementById("message").style.color = "#00bcd4";
+      document.getElementById("message").textContent = "🔄 Compteur remis à zéro.";
     }
   </script>
 
