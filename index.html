@@ -142,10 +142,10 @@
     return;
   }
 
-  if (saisie === codeCorrect) {
-        localStorage.removeItem("tentatives");
-        window.location.href = "succes.html";
-      } else {
+ if (saisie === codeCorrect) {
+  localStorage.setItem("accesAutorise", "true");
+  window.location.href = "succes.html";
+  } else {
         tentatives++;
         localStorage.setItem("tentatives", tentatives);
 
