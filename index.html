@@ -143,24 +143,20 @@
   }
 
   if (saisie === codeCorrect) {
-    messageDiv.classList.remove("shake");
-    messageDiv.classList.add("success");
-    messageDiv.textContent = `${messageReussite} (en ${tentatives} essais )`;
+        localStorage.removeItem("tentatives");
+        window.location.href = "succes.html";
+      } else {
+        tentatives++;
+        localStorage.setItem("tentatives", tentatives);
 
-    localStorage.removeItem("tentatives");
-    tentatives = 0;
-  } else {
-    tentatives++;
-    localStorage.setItem("tentatives", tentatives);
-    const phrase = messagesErreur[Math.floor(Math.random() * messagesErreur.length)];
-    messageDiv.style.color = "#ff5555";
-    messageDiv.textContent = `${phrase} (Essai n°${tentatives})`;
+        const phrase = messagesErreur[Math.floor(Math.random() * messagesErreur.length)];
+        messageDiv.textContent = `${phrase} (Essai n°${tentatives})`;
 
-    messageDiv.classList.remove("shake");
-    void messageDiv.offsetWidth;
-    messageDiv.classList.add("shake");
-  }
-}
+        messageDiv.classList.remove("shake");
+        void messageDiv.offsetWidth;
+        messageDiv.classList.add("shake");
+      }
+    }
 
     function resetCompteur() {
       localStorage.removeItem("tentatives");
