@@ -80,15 +80,15 @@
 <body>
 
   <h1>Entre le code secret</h1>
-  <input type="text" id="codeInput" placeholder="Code à 4 chiffres">
+  <input type="text" id="codeInput" placeholder="Code à 5 chiffres">
   <button onclick="verifierCode()">Valider</button>
   <button onclick="resetCompteur()">🔄 Réinitialiser le compteur</button>
 
   <div id="message"></div>
 
   <script>
-    const codeCorrect = "1234"; // 🔐 ton code ici
-    const messageReussite = " Félicitations, tu as percé le mystère ! ";
+    const codeCorrect = "12345"; // 🔐 ton code ici
+    const messageReussite = " Félicitations, tu as percé le mystère !";
 
     const messagesErreur = [
       "T’es mauvais !",
@@ -128,29 +128,39 @@
       : 0;
 
     function verifierCode() {
-      const saisie = document.getElementById("codeInput").value.trim();
-      const messageDiv = document.getElementById("message");
+  const saisie = document.getElementById("codeInput").value.trim();
+  const messageDiv = document.getElementById("message");
 
-      if (saisie === codeCorrect) {
-        messageDiv.classList.remove("shake");
-        messageDiv.classList.add("success");
-        messageDiv.textContent = `${messageReussite} (en ${tentatives} essais 🎯)`;
+  // ✅ Vérification : uniquement des chiffres (5 chiffres)
+  if (!/^\d{5}$/.test(saisie)) {
+    messageDiv.style.color = "#ff5555";
+    messageDiv.textContent = "⛔ Le code doit contenir exactement 5 chiffres.";
 
-        // Réinitialiser le compteur
-        localStorage.removeItem("tentatives");
-        tentatives = 0;
-      } else {
-        tentatives++;
-        localStorage.setItem("tentatives", tentatives);
-        const phrase = messagesErreur[Math.floor(Math.random() * messagesErreur.length)];
-        messageDiv.style.color = "#ff5555";
-        messageDiv.textContent = `${phrase} (Essai n°${tentatives})`;
+    messageDiv.classList.remove("shake");
+    void messageDiv.offsetWidth;
+    messageDiv.classList.add("shake");
+    return;
+  }
 
-        messageDiv.classList.remove("shake");
-        void messageDiv.offsetWidth;
-        messageDiv.classList.add("shake");
-      }
-    }
+  if (saisie === codeCorrect) {
+    messageDiv.classList.remove("shake");
+    messageDiv.classList.add("success");
+    messageDiv.textContent = `${messageReussite} (en ${tentatives} essais )`;
+
+    localStorage.removeItem("tentatives");
+    tentatives = 0;
+  } else {
+    tentatives++;
+    localStorage.setItem("tentatives", tentatives);
+    const phrase = messagesErreur[Math.floor(Math.random() * messagesErreur.length)];
+    messageDiv.style.color = "#ff5555";
+    messageDiv.textContent = `${phrase} (Essai n°${tentatives})`;
+
+    messageDiv.classList.remove("shake");
+    void messageDiv.offsetWidth;
+    messageDiv.classList.add("shake");
+  }
+}
 
     function resetCompteur() {
       localStorage.removeItem("tentatives");
