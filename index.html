@@ -145,17 +145,7 @@
  if (saisie === codeCorrect) {
   localStorage.setItem("accesAutorise", "true");
   window.location.href = "succes.html";
-  } else {
-        tentatives++;
-        localStorage.setItem("tentatives", tentatives);
-
-        const phrase = messagesErreur[Math.floor(Math.random() * messagesErreur.length)];
-        messageDiv.textContent = `${phrase} (Essai n°${tentatives})`;
-
-        messageDiv.classList.remove("shake");
-        void messageDiv.offsetWidth;
-        messageDiv.classList.add("shake");
-      }
+  } 
     }
 
     function resetCompteur() {
