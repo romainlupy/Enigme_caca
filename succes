@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+
+<script>
+  if (localStorage.getItem("accesAutorise") !== "true") {
+    window.location.href = "index.html";
+  }
+
+  // Supprime l'accès après ouverture (sécurité simple)
+  localStorage.removeItem("accesAutorise");
+</script>
+
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
