@@ -141,8 +141,11 @@
     messageDiv.classList.add("shake");
     return;
   }
-
- if (saisie === codeCorrect) {
+if (saisie === codeCorrect) {
+  localStorage.setItem("accesAutorise", "true");
+  window.location.href = "succes.html";
+}
+/* if (saisie === codeCorrect) {
         localStorage.removeItem("tentatives");
         window.location.href = "succes.html";
       } else {
@@ -156,7 +159,7 @@
         void messageDiv.offsetWidth;
         messageDiv.classList.add("shake");
       }
-    }
+    } */
 
     function resetCompteur() {
       localStorage.removeItem("tentatives");
