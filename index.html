@@ -131,16 +131,42 @@
   const saisie = document.getElementById("codeInput").value.trim();
   const messageDiv = document.getElementById("message");
 
+  // Vérification chiffres
   if (!/^\d{5}$/.test(saisie)) {
-    messageDiv.textContent = "⛔ Le code doit contenir 5 chiffres.";
+    messageDiv.style.color = "#ff5555";
+    messageDiv.textContent = "⛔ Le code doit contenir exactement 5 chiffres.";
+
+    messageDiv.classList.remove("shake");
+    void messageDiv.offsetWidth;
+    messageDiv.classList.add("shake");
     return;
   }
 
   if (saisie === codeCorrect) {
+    // Autorisation accès
     localStorage.setItem("accesAutorise", "true");
+
+    // Reset compteur
+    localStorage.removeItem("tentatives");
+    tentatives = 0;
+
+    // Redirection
     window.location.href = "succes.html";
   } else {
-    messageDiv.textContent = "❌ Mauvais code";
+    // Incrément compteur
+    tentatives++;
+    localStorage.setItem("tentatives", tentatives);
+
+    // Message aléatoire
+    const phrase = messagesErreur[Math.floor(Math.random() * messagesErreur.length)];
+
+    messageDiv.style.color = "#ff5555";
+    messageDiv.textContent = `${phrase} (Essai n°${tentatives})`;
+
+    // Animation shake
+    messageDiv.classList.remove("shake");
+    void messageDiv.offsetWidth;
+    messageDiv.classList.add("shake");
   }
 }
 
