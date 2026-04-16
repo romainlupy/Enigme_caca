@@ -127,24 +127,23 @@
       ? parseInt(localStorage.getItem("tentatives"))
       : 0;
 
-    function verifierCode() {
+ function verifierCode() {
   const saisie = document.getElementById("codeInput").value.trim();
   const messageDiv = document.getElementById("message");
 
-  // ✅ Vérification : uniquement des chiffres (5 chiffres)
   if (!/^\d{5}$/.test(saisie)) {
-    messageDiv.style.color = "#ff5555";
-    messageDiv.textContent = "⛔ Le code doit contenir exactement 5 chiffres.";
-
-    messageDiv.classList.remove("shake");
-    void messageDiv.offsetWidth;
-    messageDiv.classList.add("shake");
+    messageDiv.textContent = "⛔ Le code doit contenir 5 chiffres.";
     return;
   }
-if (saisie === codeCorrect) {
-  localStorage.setItem("accesAutorise", "true");
-  window.location.href = "succes.html";
+
+  if (saisie === codeCorrect) {
+    localStorage.setItem("accesAutorise", "true");
+    window.location.href = "succes.html";
+  } else {
+    messageDiv.textContent = "❌ Mauvais code";
+  }
 }
+    
 /* if (saisie === codeCorrect) {
         localStorage.removeItem("tentatives");
         window.location.href = "succes.html";
